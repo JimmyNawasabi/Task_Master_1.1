@@ -8,14 +8,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
         
         :root {
-            --bg: #0d080a; /* Deepest plum/black */
-            --surface: rgba(26, 17, 22, 0.75); /* Glassy dark velvet */
+            --bg: #0d080a; 
+            --surface: rgba(26, 17, 22, 0.75); 
             --border: #4a2c35;
             --text: #e8dadd;
             --text-muted: #a8949a;
             --gold: #d4af37;
             --gold-glow: rgba(212, 175, 55, 0.3);
-            --accent: #8a2b42; /* Deep rose */
+            --accent: #8a2b42; 
             --success: #2d4a31;
             --fail: #5a2a2a;
         }
@@ -57,6 +57,7 @@
         h1 { font-size: 2.5rem; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
 
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         
         label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-style: italic; }
         
@@ -66,7 +67,11 @@
             color: var(--text); box-sizing: border-box; font-family: 'Lora', serif; 
             margin-bottom: 15px; font-size: 1rem; transition: border 0.3s;
         }
-        input:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        
+        /* Dropdown specific styling */
+        select { cursor: pointer; appearance: auto; background: rgba(20, 10, 15, 0.8); }
+        select option { background: var(--bg); color: var(--text); font-family: 'Lora', serif; }
 
         .btn { 
             padding: 15px 25px; border: 1px solid var(--gold); border-radius: 8px; 
@@ -102,9 +107,9 @@
         #game-screen, #transition-screen, #database-modal { display: none; }
         
         .timer-val { font-size: 5rem; font-family: 'Cormorant Garamond', serif; color: var(--gold); text-align: center; margin: 20px 0; text-shadow: 0 0 20px var(--gold-glow); }
-        .score-display { display: flex; justify-content: space-around; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); }
+        .score-display { display: flex; justify-content: space-around; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--gold); align-items: center; }
+        .player-tag { font-family: 'Lora', serif; font-size: 0.8rem; font-style: italic; color: var(--text-muted); text-transform: none; letter-spacing: normal; display: block; margin-top: 2px; }
         
-        /* Modal Styles */
         #database-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; padding: 40px 20px; box-sizing: border-box;
@@ -120,17 +125,36 @@
 <div class="app-container">
     <div id="setup-screen" class="panel">
         <h1>The Chamber</h1>
+        
+        <div class="grid-2" style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <label>Player 1 (Name)</label>
+                <input type="text" id="pa-name" placeholder="Enter name...">
+                <label>Player 1 (Gender / Pronouns)</label>
+                <select id="pa-gender">
+                    <option value="She/Her">Female (She/Her)</option>
+                    <option value="He/Him">Male (He/Him)</option>
+                    <option value="They/Them">Non-Binary (They/Them)</option>
+                    <option value="Any">Any Pronouns</option>
+                </select>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <label>Player 2 (Name)</label>
+                <input type="text" id="pb-name" placeholder="Enter name...">
+                <label>Player 2 (Gender / Pronouns)</label>
+                <select id="pb-gender">
+                    <option value="He/Him">Male (He/Him)</option>
+                    <option value="She/Her">Female (She/Her)</option>
+                    <option value="They/Them">Non-Binary (They/Them)</option>
+                    <option value="Any">Any Pronouns</option>
+                </select>
+            </div>
+        </div>
+
         <div class="grid-2">
             <div>
-                <label>Dominant (Name)</label>
-                <input type="text" id="pa-name" placeholder="Enter name...">
-            </div>
-            <div>
-                <label>Submissive (Name)</label>
-                <input type="text" id="pb-name" placeholder="Enter name...">
-            </div>
-            <div>
-                <label>Depth of Session (Rounds)</label>
+                <label>Depth of Session (Total Phases)</label>
                 <input type="number" id="setup-rounds" value="10">
             </div>
             <div style="display: flex; align-items: flex-end;">
@@ -174,9 +198,20 @@
 
     <div id="game-screen" class="panel">
         <div class="score-display">
-            <div style="text-align:center"><span id="label-pa" style="font-size: 1rem; color:var(--text-muted);">P1</span><br><span id="score-pa">0</span></div>
-            <div style="text-align:center"><span style="font-size: 1rem; color:var(--text-muted);">Phase</span><br><span id="ui-round">1</span></div>
-            <div style="text-align:center"><span id="label-pb" style="font-size: 1rem; color:var(--text-muted);">P2</span><br><span id="score-pb">0</span></div>
+            <div style="text-align:center">
+                <span id="label-pa" style="font-size: 1.1rem; color:var(--text); font-family: 'Lora', serif; font-weight: bold;">P1</span>
+                <span id="gender-pa" class="player-tag">Pronouns</span>
+                <span id="score-pa" style="display:block; margin-top:5px;">0</span>
+            </div>
+            <div style="text-align:center">
+                <span style="font-size: 1rem; color:var(--text-muted); font-family: 'Lora', serif;">Phase</span><br>
+                <span id="ui-round">1</span>
+            </div>
+            <div style="text-align:center">
+                <span id="label-pb" style="font-size: 1.1rem; color:var(--text); font-family: 'Lora', serif; font-weight: bold;">P2</span>
+                <span id="gender-pb" class="player-tag">Pronouns</span>
+                <span id="score-pb" style="display:block; margin-top:5px;">0</span>
+            </div>
         </div>
 
         <h3 style="text-transform: uppercase; letter-spacing: 3px; font-size: 1.2rem; color: var(--text-muted);">
@@ -243,7 +278,7 @@ const Engine = {
     ],
     
     sessionPool: [],
-    state: { pa: {n:'', s:0}, pb: {n:'', s:0}, dom: null, sub: null, round: 1, total: 10, timeLeft: 0, timer: null, currentTask: null, isPaused: false },
+    state: { pa: {n:'', g:'', s:0}, pb: {n:'', g:'', s:0}, dom: null, sub: null, round: 1, total: 10, timeLeft: 0, timer: null, currentTask: null, isPaused: false },
 
     init() {
         const ui = document.getElementById('inventory-ui');
@@ -259,7 +294,6 @@ const Engine = {
         this.renderDatabaseList();
     },
 
-    // --- DB Management ---
     openDatabase() { AudioEngine.click(); document.getElementById('database-modal').style.display = 'block'; this.renderDatabaseList(); },
     closeDatabase() { AudioEngine.click(); document.getElementById('database-modal').style.display = 'none'; },
     
@@ -289,7 +323,6 @@ const Engine = {
     
     deleteTask(i) { AudioEngine.click(); this.customTasks.splice(i, 1); this.save(); this.renderDatabaseList(); },
 
-    // --- Inventory & Prizes ---
     addItem(cat, el) { if(!el.value) return; this.inventory[cat].push({ n: el.value, a: true }); el.value = ''; this.save(); this.renderItems(cat); },
     renderItems(cat) { document.getElementById(`list-${cat}`).innerHTML = this.inventory[cat].map((item, i) => `<div class="chip ${item.a ? 'active' : ''}" onclick="Engine.toggleItem('${cat}', ${i})">${item.n} <span onclick="event.stopPropagation(); Engine.removeItem('${cat}', ${i})">×</span></div>`).join(''); },
     toggleItem(cat, i) { AudioEngine.click(); this.inventory[cat][i].a = !this.inventory[cat][i].a; this.save(); this.renderItems(cat); },
@@ -301,11 +334,13 @@ const Engine = {
     
     save() { localStorage.setItem('tm_vS_inv', JSON.stringify(this.inventory)); localStorage.setItem('tm_vS_tasks', JSON.stringify(this.customTasks)); localStorage.setItem('tm_vS_prizes', JSON.stringify(this.prizes)); },
 
-    // --- Core Engine ---
     start() {
         AudioEngine.start();
         this.state.pa.n = document.getElementById('pa-name').value || "Player 1";
+        this.state.pa.g = document.getElementById('pa-gender').value;
         this.state.pb.n = document.getElementById('pb-name').value || "Player 2";
+        this.state.pb.g = document.getElementById('pb-gender').value;
+        
         this.state.total = parseInt(document.getElementById('setup-rounds').value) || 10;
         this.sessionPool = [...this.customTasks];
         
@@ -342,11 +377,17 @@ const Engine = {
         document.getElementById('task-text').innerHTML = html;
         document.getElementById('current-dom-name').innerText = this.state.dom.n;
         document.getElementById('timer-display').innerText = this.fmt(this.state.currentTask.time);
-        document.getElementById('score-pa').innerText = this.state.pa.s;
-        document.getElementById('score-pb').innerText = this.state.pb.s;
-        document.getElementById('ui-round').innerText = `${this.state.round} / ${this.state.total}`;
+        
+        // Update Score Board with Names and Pronouns
         document.getElementById('label-pa').innerText = this.state.pa.n;
+        document.getElementById('gender-pa').innerText = this.state.pa.g;
+        document.getElementById('score-pa').innerText = this.state.pa.s;
+        
         document.getElementById('label-pb').innerText = this.state.pb.n;
+        document.getElementById('gender-pb').innerText = this.state.pb.g;
+        document.getElementById('score-pb').innerText = this.state.pb.s;
+        
+        document.getElementById('ui-round').innerText = `${this.state.round} / ${this.state.total}`;
     },
 
     triggerPhase() {
